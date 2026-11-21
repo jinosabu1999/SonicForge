@@ -709,21 +709,139 @@ body.overlay-open { overflow: hidden; }
 .shortcut .keys { margin-left: auto; display: flex; gap: 4px; }
 
 .cmdk {
-  position: fixed; z-index: 80; left: 50%; top: 12vh; transform: translateX(-50%) scale(.97);
-  width: min(540px, 92vw); background: var(--glass-grad), rgba(22, 22, 28, .88); border: 1px solid var(--rim-2);
-  border-radius: var(--r-lg); box-shadow: var(--spec), 0 36px 80px -24px #000; overflow: hidden;
-  opacity: 0; pointer-events: none; transition: opacity 160ms var(--ease), transform 160ms var(--ease);
-  backdrop-filter: blur(36px) saturate(210%); -webkit-backdrop-filter: blur(36px) saturate(210%);
+  position: fixed; z-index: 80; left: 50%; top: min(10vh, 72px);
+  transform: translateX(-50%) translateY(-6px) scale(.965);
+  width: min(580px, calc(100vw - 20px));
+  max-height: calc(100dvh - 24px - var(--sat));
+  display: flex; flex-direction: column;
+  background:
+    radial-gradient(120% 70% at 15% 0%, rgba(100, 210, 255, .12), transparent 56%),
+    var(--glass-grad), rgba(18, 19, 26, .9);
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: 26px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 36px 90px -18px rgba(0, 0, 0, .92);
+  overflow: hidden;
+  opacity: 0; pointer-events: none;
+  transition: opacity 180ms var(--ease), transform 220ms var(--ease);
+  backdrop-filter: blur(42px) saturate(220%); -webkit-backdrop-filter: blur(42px) saturate(220%);
 }
-.cmdk.on { opacity: 1; pointer-events: auto; transform: translateX(-50%) scale(1); }
-.cmdk-in { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.09); }
-.cmdk-in svg { width: 17px; height: 17px; color: var(--txt-3); flex: none; }
-.cmdk-in input { border: 0; background: none; height: auto; padding: 0; font-size: 14.5px; box-shadow: none !important; }
-.cmdk-list { max-height: min(50vh, 400px); overflow-y: auto; padding: 6px; }
-.cmdk-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 11px; border-radius: 12px; font-size: 13px; color: var(--txt-2); text-align: left; }
-.cmdk-item kbd { margin-left: auto; }
-.cmdk-item.sel { background: rgba(255, 255, 255, .15); color: #fff; }
-.cmdk-empty { padding: 24px; text-align: center; color: var(--txt-3); font-size: 13px; }
+.cmdk.on { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0) scale(1); }
+.cmdk-in {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 14px 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, .09);
+  background: rgba(255, 255, 255, .025);
+}
+.cmdk-search-ic { width: 18px; height: 18px; color: var(--acc); flex: none; opacity: .9; }
+.cmdk-in input {
+  flex: 1 1 auto; min-width: 0; width: 100%; border: 0; background: none; height: auto; padding: 0;
+  font-size: 15px; font-weight: 500; letter-spacing: -.15px; color: var(--txt);
+  box-shadow: none !important; outline: none;
+}
+.cmdk-in input::placeholder { color: var(--txt-3); font-weight: 430; }
+.cmdk-clear {
+  width: 24px; height: 24px; border-radius: 999px; flex: none;
+  display: grid; place-items: center; color: var(--txt-2);
+  background: rgba(255, 255, 255, .1); transition: background var(--fast), color var(--fast);
+}
+.cmdk-clear:hover { background: rgba(255, 255, 255, .18); color: #fff; }
+.cmdk-clear svg { width: 13px; height: 13px; }
+.cmdk-close {
+  flex: none; padding: 5px 10px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 600; color: var(--txt-2);
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14);
+  transition: background var(--fast), color var(--fast), transform var(--fast);
+}
+.cmdk-close:hover { background: rgba(255, 255, 255, .16); color: #fff; }
+.cmdk-close:active { transform: scale(.94); }
+.cmdk-tabs {
+  display: flex; align-items: center; gap: 6px; padding: 9px 12px;
+  overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  background: rgba(8, 9, 14, .28);
+}
+.cmdk-tabs::-webkit-scrollbar { display: none; }
+.cmdk-tab {
+  flex: none; padding: 5px 11px; border-radius: 999px;
+  font-size: 11.5px; font-weight: 580; color: var(--txt-2);
+  background: rgba(255, 255, 255, .055); border: 1px solid rgba(255, 255, 255, .09);
+  transition: background var(--fast), border-color var(--fast), color var(--fast), transform var(--fast);
+}
+.cmdk-tab:hover { background: rgba(255, 255, 255, .11); color: var(--txt); }
+.cmdk-tab:active { transform: scale(.95); }
+.cmdk-tab.on {
+  background: rgba(100, 210, 255, .2); border-color: rgba(100, 210, 255, .52);
+  color: #e4f8ff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22);
+}
+.cmdk-list {
+  flex: 1 1 auto; min-height: 0; max-height: min(52vh, 420px);
+  overflow-y: auto; overscroll-behavior: contain; padding: 8px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.cmdk-grp {
+  padding: 6px 10px 4px; font-size: 10px; font-weight: 680;
+  letter-spacing: .75px; text-transform: uppercase; color: var(--txt-3);
+}
+.cmdk-item {
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 8px 10px; border-radius: 14px; font-size: 13.5px; color: var(--txt-2);
+  text-align: left; border: 1px solid transparent;
+  transition: background 120ms var(--ease), border-color 120ms var(--ease), transform 120ms var(--ease), color 120ms var(--ease);
+}
+.cmdk-item:active { transform: scale(.985); }
+.cmdk-item.sel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .07));
+  border-color: rgba(255, 255, 255, .18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 6px 18px -10px rgba(0, 0, 0, .7);
+  color: #fff;
+}
+.cmdk-ic {
+  width: 30px; height: 30px; border-radius: 10px; flex: none;
+  display: grid; place-items: center;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .12);
+  color: var(--txt-2);
+}
+.cmdk-ic svg { width: 15px; height: 15px; display: block; flex: none; }
+.cmdk-item.sel .cmdk-ic { border-color: rgba(255, 255, 255, .25); }
+.cmdk-ic[data-cat="Playback"] { background: rgba(255, 69, 58, .16); border-color: rgba(255, 69, 58, .32); color: #ff8a82; }
+.cmdk-ic[data-cat="Edit"] { background: rgba(100, 210, 255, .16); border-color: rgba(100, 210, 255, .32); color: #8ae0ff; }
+.cmdk-ic[data-cat="Effects"] { background: rgba(191, 90, 242, .18); border-color: rgba(191, 90, 242, .35); color: #dfa8ff; }
+.cmdk-ic[data-cat="Smart"] { background: rgba(255, 214, 10, .15); border-color: rgba(255, 214, 10, .32); color: #ffe76a; }
+.cmdk-ic[data-cat="Track"] { background: rgba(48, 209, 88, .15); border-color: rgba(48, 209, 88, .32); color: #6ef08d; }
+.cmdk-ic[data-cat="View"] { background: rgba(10, 132, 255, .18); border-color: rgba(10, 132, 255, .34); color: #7ac0ff; }
+.cmdk-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.cmdk-title {
+  font-size: 13.5px; font-weight: 560; color: var(--txt);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cmdk-title mark {
+  background: rgba(100, 210, 255, .26); color: #e8f9ff;
+  border-radius: 4px; padding: 0 2px; font-weight: 650;
+}
+.cmdk-sub {
+  font-size: 11px; color: var(--txt-3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cmdk-item.sel .cmdk-sub { color: var(--txt-2); }
+.cmdk-right { display: flex; align-items: center; gap: 7px; flex: none; margin-left: auto; }
+.cmdk-item kbd {
+  margin-left: 0; padding: 4px 7px; font-size: 10.5px; border-radius: 7px;
+  background: rgba(0, 0, 0, .42); border-color: rgba(255, 255, 255, .14); color: var(--txt-2);
+}
+.cmdk-item.sel kbd { color: #fff; border-color: rgba(255, 255, 255, .26); }
+.cmdk-arr { width: 13px; height: 13px; flex: none; color: var(--txt-3); opacity: .65; }
+.cmdk-item.sel .cmdk-arr { color: var(--acc); opacity: 1; }
+.cmdk-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 8px 14px; border-top: 1px solid rgba(255, 255, 255, .08);
+  background: rgba(8, 9, 14, .42); font-size: 11px; color: var(--txt-3);
+}
+.cmdk-empty { padding: 28px 16px; text-align: center; color: var(--txt-3); font-size: 13px; }
+@media (max-width: 759px) {
+  .cmdk { top: calc(var(--sat) + 10px); width: calc(100vw - 16px); border-radius: 22px; }
+  .cmdk-list { max-height: min(46dvh, 380px); }
+  .cmdk-item kbd { display: none; }
+}
 
 .toasts {
   position: fixed; z-index: 90; left: 50%; transform: translateX(-50%);
@@ -1452,11 +1570,14 @@ body.overlay-open { overflow: hidden; }
 
 <div class="cmdk" id="cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
   <div class="cmdk-in">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
-    <input type="text" id="cmdkInput" placeholder="Type a command…" autocomplete="off" spellcheck="false">
-    <kbd>esc</kbd>
+    <svg class="cmdk-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+    <input type="text" id="cmdkInput" placeholder="Search tools, effects, presets, export…" autocomplete="off" spellcheck="false">
+    <button type="button" class="cmdk-clear" id="cmdkClear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <button type="button" class="cmdk-close" id="cmdkClose">Done</button>
   </div>
+  <div class="cmdk-tabs" id="cmdkTabs" role="tablist" aria-label="Command categories"></div>
   <div class="cmdk-list" id="cmdkList"></div>
+  <div class="cmdk-foot"><span id="cmdkCount">0 tools</span><span class="desktop-only">↑↓ Move · ↵ Run · Esc Close</span><span class="mobile-only">Tap any tool to run</span></div>
 </div>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true">
@@ -18224,6 +18345,24 @@ lamejs();
   let baseDirty = true, fxDirty = true, rafId = 0;
   const pointers = new Map();
   let drag = null, pinch = null;
+  const Coincide = { edge: null, until: 0, timer: 0 };
+  function triggerCoincideFeedback(edge) {
+    haptic(22);
+    Coincide.edge = edge;
+    Coincide.until = performance.now() + 340;
+    clearTimeout(Coincide.timer);
+    Coincide.timer = setTimeout(() => { fxDirty = true; }, 355);
+    fxDirty = true;
+  }
+  function checkCrossingCoincide(prevT, nextT) {
+    if (!hasAudio) return;
+    const [a, b] = selRange();
+    const ta = a / S.rate, tb = b / S.rate;
+    const crossedA = (prevT < ta && nextT >= ta) || (prevT > ta && nextT <= ta);
+    const crossedB = (prevT < tb && nextT >= tb) || (prevT > tb && nextT <= tb);
+    if (crossedA) triggerCoincideFeedback('a');
+    else if (crossedB) triggerCoincideFeedback('b');
+  }
 
   const dur = () => (S.data && S.data[0] ? S.data[0].length / S.rate : 0);
   function selRange() {
@@ -19627,14 +19766,36 @@ self.onmessage = function (e) {
 
     // edge handles — always drawn, full height, thumb sized
     const hw = 15, hh = Math.min(74, h * 0.62);
-    for (const [x, side, active] of [[xa, -1, drag && drag.mode === 'a'], [xb, 1, drag && drag.mode === 'b']]) {
+    const nowMs = performance.now();
+    const pxPlay = tToX(P.t);
+    const edgeAligned = {
+      a: Math.abs(pxPlay - xa) <= 2.5 || (Coincide.edge === 'a' && Coincide.until > nowMs),
+      b: Math.abs(pxPlay - xb) <= 2.5 || (Coincide.edge === 'b' && Coincide.until > nowMs),
+    };
+    for (const [key, x, side, active] of [['a', xa, -1, drag && drag.mode === 'a'], ['b', xb, 1, drag && drag.mode === 'b']]) {
       const hx = clamp(x, hw / 2 + 1, canvasW - hw / 2 - 1);
-      c.strokeStyle = 'rgba(244,244,245,.72)';
-      c.lineWidth = 1.25;
+      const isLit = edgeAligned[key];
+      c.save();
+      if (isLit) {
+        c.strokeStyle = '#30d158';
+        c.lineWidth = 2.4;
+        c.shadowColor = 'rgba(48, 209, 88, .85)';
+        c.shadowBlur = 10;
+      } else {
+        c.strokeStyle = 'rgba(244,244,245,.72)';
+        c.lineWidth = 1.25;
+      }
       c.beginPath(); c.moveTo(hx, top); c.lineTo(hx, top + h); c.stroke();
+      c.restore();
       const hy = top + h / 2;
       c.save();
-      c.fillStyle = active ? '#64d2ff' : '#ffffff';
+      if (isLit) {
+        c.fillStyle = '#30d158';
+        c.shadowColor = 'rgba(48, 209, 88, .75)';
+        c.shadowBlur = 12;
+      } else {
+        c.fillStyle = active ? '#64d2ff' : '#ffffff';
+      }
       roundRect(c, hx - hw / 2, hy - hh / 2, hw, hh, 6); c.fill();
       c.restore();
       c.strokeStyle = 'rgba(24,6,34,.72)';
@@ -19727,13 +19888,20 @@ self.onmessage = function (e) {
 
     // playhead (Voice Memos Crimson needle)
     const px = tToX(P.t);
+    const anyCoincide = edgeAligned.a || edgeAligned.b;
     if (px >= -2 && px <= canvasW + 2) {
       c.save();
-      c.strokeStyle = '#ff453a'; c.lineWidth = 1.6;
+      c.strokeStyle = anyCoincide ? '#30d158' : '#ff453a';
+      c.lineWidth = anyCoincide ? 2.1 : 1.6;
+      if (anyCoincide) { c.shadowColor = 'rgba(48, 209, 88, .85)'; c.shadowBlur = 8; }
       c.beginPath(); c.moveTo(px, top - 2); c.lineTo(px, top + h); c.stroke();
       c.restore();
       c.fillStyle = '#ff453a';
-      c.beginPath(); c.arc(px, top, 4.2, 0, TAU); c.fill();
+      c.beginPath(); c.arc(px, top, anyCoincide ? 5.2 : 4.2, 0, TAU); c.fill();
+      if (anyCoincide) {
+        c.strokeStyle = '#30d158'; c.lineWidth = 2;
+        c.beginPath(); c.arc(px, top, 8.2, 0, TAU); c.stroke();
+      }
     }
 
     // Touch / Precision Magnifier Loupe when dragging selection handles or scrubbing
@@ -19772,7 +19940,7 @@ self.onmessage = function (e) {
       c.fillStyle = '#f4f4f7';
       c.font = '600 10.5px ui-monospace, monospace';
       c.textAlign = 'center'; c.textBaseline = 'top';
-      const tag = drag.mode === 'a' ? 'IN ' : drag.mode === 'b' ? 'OUT ' : '';
+      const tag = drag.mode === 'a' ? (edgeAligned.a ? '= PLAYHEAD ' : 'IN ') : drag.mode === 'b' ? (edgeAligned.b ? '= PLAYHEAD ' : 'OUT ') : (edgeAligned.a ? '= IN ' : edgeAligned.b ? '= OUT ' : '');
       c.fillText(tag + fmtTime(sample / S.rate), cx, by + 4);
       c.textAlign = 'left';
     }
@@ -19879,10 +20047,13 @@ self.onmessage = function (e) {
     const r = baseCv.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   }
-  function hitTest(x) {
+  function hitTest(x, y) {
     const [a, b] = selRange();
     const tol = 24;   // generous for thumbs; handles are drawn full height
     const xa = tToX(a / S.rate), xb = tToX(b / S.rate);
+    const px = tToX(P.t);
+    if (typeof y === 'number' && y <= 34) return 'scrub';
+    if (Math.abs(x - px) <= 18 && Math.abs(x - xa) > 14 && Math.abs(x - xb) > 14) return 'scrub';
     if (Math.abs(x - xa) <= tol) return 'a';
     if (Math.abs(x - xb) <= tol) return 'b';
     if (x > xa && x < xb) return 'move';
@@ -19922,9 +20093,9 @@ self.onmessage = function (e) {
         haptic(6); fxDirty = true; return;
       }
     }
-    const mode = hitTest(p.x);
+    const mode = hitTest(p.x, p.y);
     const [a, b] = selRange();
-    drag = { mode, id: e.pointerId, sx: p.x, a, b, t0: xToT(p.x), moved: false };
+    drag = { mode, id: e.pointerId, sx: p.x, a, b, t0: xToT(p.x), moved: false, lastCoincide: null };
     if (mode === 'scrub') { P.t = clamp(xToT(p.x), 0, dur()); fxDirty = true; updateTimecode(); }
     if (mode !== 'scrub') haptic(6);
     fxDirty = true;
@@ -19933,7 +20104,7 @@ self.onmessage = function (e) {
     if (!pointers.has(e.pointerId)) {
       if (hasAudio && !drag) {
         const p = canvasXY(e);
-        baseCv.style.cursor = hitTest(p.x) === 'scrub' ? 'crosshair' : 'ew-resize';
+        baseCv.style.cursor = hitTest(p.x, p.y) === 'scrub' ? 'crosshair' : 'ew-resize';
       }
       return;
     }
@@ -19971,7 +20142,24 @@ self.onmessage = function (e) {
       fxDirty = true;
       return;
     } else if (drag.mode === 'scrub') {
-      P.t = clamp(t, 0, dur());
+      const prevT = P.t;
+      const rawT = clamp(t, 0, dur());
+      const [sa, sb] = selRange();
+      const ta = sa / S.rate, tb = sb / S.rate;
+      const rawPx = tToX(rawT), xa = tToX(ta), xb = tToX(tb);
+      const da = Math.abs(rawPx - xa), db = Math.abs(rawPx - xb);
+      const nearEdge = (da <= 5.5 && da <= db) ? 'a' : (db <= 5.5 ? 'b' : null);
+      if (nearEdge === 'a') {
+        P.t = ta;
+        if (drag.lastCoincide !== 'a') { triggerCoincideFeedback('a'); drag.lastCoincide = 'a'; }
+      } else if (nearEdge === 'b') {
+        P.t = tb;
+        if (drag.lastCoincide !== 'b') { triggerCoincideFeedback('b'); drag.lastCoincide = 'b'; }
+      } else {
+        P.t = rawT;
+        if (da > 10 && db > 10) drag.lastCoincide = null;
+        checkCrossingCoincide(prevT, rawT);
+      }
       updateTimecode();
       if ($('#jogTimeOut')) $('#jogTimeOut').textContent = fmtTime(P.t);
       if (drag.moved) playScrubGrain(P.t);
@@ -19984,8 +20172,21 @@ self.onmessage = function (e) {
       Sel.b = Math.round((na + len) * S.rate);
       syncSelectionUI();
     } else {
+      const prevEdgeT = (drag.mode === 'a' ? Sel.a : Sel.b) / S.rate;
       let sample = clamp(Math.round(t * S.rate), 0, S.data[0].length);
       sample = snapSample(sample);
+      const playPx = tToX(P.t), edgePx = tToX(sample / S.rate);
+      const dPlay = Math.abs(edgePx - playPx);
+      if (dPlay <= 4.5) {
+        sample = clamp(Math.round(P.t * S.rate), 0, S.data[0].length);
+        if (drag.lastCoincide !== drag.mode) { triggerCoincideFeedback(drag.mode); drag.lastCoincide = drag.mode; }
+      } else {
+        if (dPlay > 10) drag.lastCoincide = null;
+        const nextEdgeT = sample / S.rate;
+        if ((prevEdgeT < P.t && nextEdgeT >= P.t) || (prevEdgeT > P.t && nextEdgeT <= P.t)) {
+          triggerCoincideFeedback(drag.mode);
+        }
+      }
       if (drag.mode === 'a') Sel.a = Math.min(sample, Sel.b - 1);
       else Sel.b = Math.max(sample, Sel.a + 1);
       syncSelectionUI();
@@ -22460,117 +22661,212 @@ self.onmessage = function (e) {
   }
 
   /* ----------------------------------------------------- command palette */
+  const CMD_ICONS = {
+    Playback: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="7 5 19 12 7 19 7 5"/></svg>',
+    Edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>',
+    Effects: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>',
+    Smart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>',
+    Track: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="m3 12 9 4.5 9-4.5"/><path d="m3 16.5 9 4.5 9-4.5"/></svg>',
+    View: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>',
+  };
   const COMMANDS = [
-    { t: 'Open audio file', k: 'Ctrl+O', run: () => $('#fileInput').click() },
-    { t: 'Multitrack & Layering Studio', run: openLayersPanel },
-    { t: 'Bounce Track 1 + Track 2 Mix', run: bounceMixToMain },
-    { t: 'Bake Non-Destructive FX Rack', run: bakeRackToMain },
-    { t: 'Merge multiple clips', run: openMergeStudio },
-    { t: 'Play / pause', k: 'Space', run: togglePlay },
-    { t: 'Stop and rewind', k: 'Esc', run: () => { stopPlay(); P.t = 0; fxDirty = true; updateTimecode(); } },
-    { t: 'Toggle loop', k: 'L', run: () => { P.loop = !P.loop; if (P.playing) { P.t = curTime(); play(); } syncTransport(); } },
-    { t: 'Export selection', run: exportSelection },
-    { t: 'Scan for silence', run: scanSilence },
-    { t: 'Jump to next silence', k: 'N', run: () => gotoSilence(1) },
-    { t: 'Jump to previous silence', k: 'P', run: () => gotoSilence(-1) },
-    { t: 'Trim head and tail silence', run: trimSilenceEnds },
-    { t: 'Delete every silence', run: deleteAllSilence },
-    { t: 'Add marker at playhead', k: 'K', run: addMarker },
-    { t: 'Batch export chapters (.zip)', run: batchExportMarkersZip },
-    { t: 'Detect beats & BPM', run: detectBeatsAndBpm },
-    { t: 'Jump-cut: tighten silent pauses', run: tightenPausesJumpCut },
-    { t: 'Ringtone 30s maker', run: () => setupRingtone(30) },
-    { t: 'Podcast Intro / Outro Builder', run: openPodcastBuilder },
-    { t: 'Clear markers', run: clearMarkers },
-    { t: 'Keep audio before playhead', run: () => splitAt('left') },
-    { t: 'Keep audio after playhead', run: () => splitAt('right') },
-    { t: 'Zoom to selection', run: zoomToSelection },
-    { t: 'Move playhead to selection start', run: () => seek(Sel.a / S.rate, false) },
-    { t: 'Clean up: trim silence and normalize', run: cleanup },
-    { t: 'Snap selection to silence', run: snapToSilence },
-    { t: 'A/B loop the selection', run: abLoop },
-    { t: 'Download session file', run: saveSessionFile },
-    { t: 'Select from start to playhead', run: () => { Sel.a = 0; Sel.b = Math.round(P.t * S.rate); baseDirty = fxDirty = true; syncSelectionUI(); } },
-    { t: 'Select from playhead to end', run: () => { Sel.a = Math.round(P.t * S.rate); Sel.b = S.data[0].length; baseDirty = fxDirty = true; syncSelectionUI(); } },
-    { t: 'Select all', k: 'Ctrl+A', run: () => { Sel.a = 0; Sel.b = S.data[0].length; syncSelectionUI(); baseDirty = fxDirty = true; } },
-    { t: 'Clear selection', run: () => { Sel.a = Sel.b = 0; syncSelectionUI(); baseDirty = fxDirty = true; } },
-    { t: 'Trim to selection', k: 'T', run: doTrim },
-    { t: 'Delete selection', k: 'Del', run: doDelete },
-    { t: 'Silence selection', run: doSilence },
-    { t: 'Insert silence at playhead', k: 'I', run: doInsertSilence },
-    { t: 'Reverse selection', k: 'R', run: doReverse },
-    { t: 'Copy selection', k: 'Ctrl+C', run: doCopy },
-    { t: 'Paste at playhead', k: 'Ctrl+V', run: doPaste },
-    { t: 'Mix paste at playhead', k: 'Ctrl+M', run: doMix },
-    { t: 'Fade in', run: () => doFade('in') },
-    { t: 'Fade out', run: () => doFade('out') },
-    { t: 'Normalize', k: 'Ctrl+Shift+N', run: doNormalize },
-    { t: 'Apply compressor & limiter', run: doCompress },
-    { t: 'Apply de-esser', run: doDeEss },
-    { t: 'Add volume envelope point', run: () => { addEnvPoint(P.t, -6); } },
-    { t: 'Apply volume envelope', run: doApplyEnvelope },
-    { t: 'Keep Left channel only', run: () => doKeepChannel(0) },
-    { t: 'Keep Right channel only', run: () => doKeepChannel(1) },
-    { t: 'Swap Left / Right channels', run: doSwapLR },
-    { t: 'View: Waveform', run: () => setWaveMode('wave') },
-    { t: 'View: Stereo L / R', run: () => setWaveMode('stereo') },
-    { t: 'View: Spectrogram', run: () => setWaveMode('spec') },
-    { t: 'View: Spec + Wave Mix', run: () => setWaveMode('mix') },
-    { t: 'Remove DC offset', run: doDC },
-    { t: 'Apply EQ', run: doEq },
-    { t: 'Apply reverb', run: doReverb },
-    { t: 'Time stretch', run: doStretch },
-    { t: 'Pitch shift', run: doPitch },
-    { t: 'Denoise', run: doDenoise },
-    { t: 'Capture noise profile', run: captureProfile },
-    { t: 'Mix to mono', run: doMono },
-    { t: 'Duplicate to stereo', run: doStereo },
-    { t: 'Zoom in', k: '+', run: () => zoomAt(1.4) },
-    { t: 'Zoom out', k: '−', run: () => zoomAt(1 / 1.4) },
-    { t: 'Zoom to fit', k: '0', run: fitView },
-    { t: 'Undo', k: 'Ctrl+Z', run: undo },
-    { t: 'Redo', k: 'Ctrl+Shift+Z', run: redo },
-    { t: 'Preset: Podcast Pro', run: () => $('#presetPodcast').click() },
-    { t: 'Preset: Warm Radio', run: () => $('#presetRadio').click() },
-    { t: 'Preset: Telephone Lo-Fi', run: () => $('#presetLofi').click() },
-    { t: 'Export audio', k: 'Ctrl+E', run: () => doExport(false) },
-    { t: 'Record from microphone', run: startRecording },
-    { t: 'Select the last 5 seconds', run: () => selectTail(5) },
-    { t: 'Select the last 10 seconds', run: () => selectTail(10) },
-    { t: 'Audition the original file for 3 s', run: () => { compareOn(); setTimeout(compareOff, 3000); } },
-    { t: 'Keyboard shortcuts', k: '?', run: showHelp },
+    { t: 'Play / pause', cat: 'Playback', sub: 'Toggle audio playback', k: 'Space', run: togglePlay },
+    { t: 'Stop and rewind', cat: 'Playback', sub: 'Stop and jump to 0:00', k: 'Esc', run: () => { stopPlay(); P.t = 0; fxDirty = true; updateTimecode(); } },
+    { t: 'Toggle loop', cat: 'Playback', sub: 'Loop active selection', k: 'L', run: () => { P.loop = !P.loop; if (P.playing) { P.t = curTime(); play(); } syncTransport(); } },
+    { t: 'A/B loop the selection', cat: 'Playback', sub: 'Audition selected region continuously', run: abLoop },
+    { t: 'Move playhead to selection start', cat: 'Playback', sub: 'Cue playhead to IN marker', run: () => seek(Sel.a / S.rate, false) },
+    { t: 'Audition original file for 3 s', cat: 'Playback', sub: 'Bypass live FX rack briefly', run: () => { compareOn(); setTimeout(compareOff, 3000); } },
+
+    { t: 'Jump-cut: tighten silent pauses', cat: 'Smart', sub: 'Auto-shorten long gaps & breaths', run: tightenPausesJumpCut },
+    { t: 'Detect beats & BPM', cat: 'Smart', sub: 'Transient beat analysis + markers', run: detectBeatsAndBpm },
+    { t: 'Ringtone 30s maker', cat: 'Smart', sub: '30 s loop window + 0.5 s fades', run: () => setupRingtone(30) },
+    { t: 'Podcast Intro / Outro Builder', cat: 'Smart', sub: 'Assemble intro, episode & outro at -16 LUFS', run: openPodcastBuilder },
+    { t: 'Batch export chapters (.zip)', cat: 'Smart', sub: 'Split by markers into zipped tracks', run: batchExportMarkersZip },
+    { t: 'Clean up: trim silence and normalize', cat: 'Smart', sub: 'One-tap podcast polish', run: cleanup },
+    { t: 'Scan for silence', cat: 'Smart', sub: 'Detect quiet sections across track', run: scanSilence },
+    { t: 'Jump to next silence', cat: 'Smart', sub: 'Navigate to next detected pause', k: 'N', run: () => gotoSilence(1) },
+    { t: 'Jump to previous silence', cat: 'Smart', sub: 'Navigate to previous pause', k: 'P', run: () => gotoSilence(-1) },
+    { t: 'Trim head and tail silence', cat: 'Smart', sub: 'Remove dead air at start and end', run: trimSilenceEnds },
+    { t: 'Delete every silence', cat: 'Smart', sub: 'Strip all silent segments', run: deleteAllSilence },
+
+    { t: 'Trim to selection', cat: 'Edit', sub: 'Keep only selected region', k: 'T', run: doTrim },
+    { t: 'Delete selection', cat: 'Edit', sub: 'Cut selected audio cleanly', k: 'Del', run: doDelete },
+    { t: 'Keep audio before playhead', cat: 'Edit', sub: 'Split and discard right side', run: () => splitAt('left') },
+    { t: 'Keep audio after playhead', cat: 'Edit', sub: 'Split and discard left side', run: () => splitAt('right') },
+    { t: 'Add marker at playhead', cat: 'Edit', sub: 'Drop chapter / cue marker', k: 'K', run: addMarker },
+    { t: 'Clear markers', cat: 'Edit', sub: 'Remove all timeline markers', run: clearMarkers },
+    { t: 'Fade in', cat: 'Edit', sub: 'Smooth equal-power fade in', run: () => doFade('in') },
+    { t: 'Fade out', cat: 'Edit', sub: 'Smooth equal-power fade out', run: () => doFade('out') },
+    { t: 'Silence selection', cat: 'Edit', sub: 'Mute selected range cleanly', run: doSilence },
+    { t: 'Insert silence at playhead', cat: 'Edit', sub: 'Insert timed pause', k: 'I', run: doInsertSilence },
+    { t: 'Reverse selection', cat: 'Edit', sub: 'Play selected region backwards', k: 'R', run: doReverse },
+    { t: 'Copy selection', cat: 'Edit', sub: 'Copy region to studio clipboard', k: 'Ctrl+C', run: doCopy },
+    { t: 'Paste at playhead', cat: 'Edit', sub: 'Insert clipboard audio', k: 'Ctrl+V', run: doPaste },
+    { t: 'Mix paste at playhead', cat: 'Edit', sub: 'Layer clipboard audio on top', k: 'Ctrl+M', run: doMix },
+    { t: 'Select all', cat: 'Edit', sub: 'Highlight entire track', k: 'Ctrl+A', run: () => { Sel.a = 0; Sel.b = S.data[0].length; syncSelectionUI(); baseDirty = fxDirty = true; } },
+    { t: 'Clear selection', cat: 'Edit', sub: 'Reset IN/OUT handles', run: () => { Sel.a = Sel.b = 0; syncSelectionUI(); baseDirty = fxDirty = true; } },
+    { t: 'Select from start to playhead', cat: 'Edit', sub: 'Range 0:00 → playhead', run: () => { Sel.a = 0; Sel.b = Math.round(P.t * S.rate); baseDirty = fxDirty = true; syncSelectionUI(); } },
+    { t: 'Select from playhead to end', cat: 'Edit', sub: 'Range playhead → end', run: () => { Sel.a = Math.round(P.t * S.rate); Sel.b = S.data[0].length; baseDirty = fxDirty = true; syncSelectionUI(); } },
+    { t: 'Select the last 5 seconds', cat: 'Edit', sub: 'Quick tail selection', run: () => selectTail(5) },
+    { t: 'Select the last 10 seconds', cat: 'Edit', sub: 'Quick tail selection', run: () => selectTail(10) },
+    { t: 'Snap selection to silence', cat: 'Edit', sub: 'Align handles to quiet edges', run: snapToSilence },
+    { t: 'Undo', cat: 'Edit', sub: 'Step back one edit', k: 'Ctrl+Z', run: undo },
+    { t: 'Redo', cat: 'Edit', sub: 'Re-apply undone edit', k: 'Ctrl+Shift+Z', run: redo },
+
+    { t: 'Normalize', cat: 'Effects', sub: 'Maximize loudness cleanly', k: 'Ctrl+Shift+N', run: doNormalize },
+    { t: 'Apply EQ', cat: 'Effects', sub: 'Bake 3-band EQ curve', run: doEq },
+    { t: 'Apply compressor & limiter', cat: 'Effects', sub: 'Control peaks & punch', run: doCompress },
+    { t: 'Apply de-esser', cat: 'Effects', sub: 'Tame harsh vocal sibilance', run: doDeEss },
+    { t: 'Apply reverb', cat: 'Effects', sub: 'Bake studio space ambience', run: doReverb },
+    { t: 'Denoise', cat: 'Effects', sub: 'Reduce background hum & hiss', run: doDenoise },
+    { t: 'Capture noise profile', cat: 'Effects', sub: 'Sample ambient noise from selection', run: captureProfile },
+    { t: 'Time stretch', cat: 'Effects', sub: 'Change tempo without pitch shift', run: doStretch },
+    { t: 'Pitch shift', cat: 'Effects', sub: 'Transpose semitones cleanly', run: doPitch },
+    { t: 'Add volume envelope point', cat: 'Effects', sub: 'Drop keyframe at playhead', run: () => { addEnvPoint(P.t, -6); } },
+    { t: 'Apply volume envelope', cat: 'Effects', sub: 'Bake automation curve into audio', run: doApplyEnvelope },
+    { t: 'Remove DC offset', cat: 'Effects', sub: 'Center waveform around zero', run: doDC },
+    { t: 'Bake Non-Destructive FX Rack', cat: 'Effects', sub: 'Render live FX chain permanently', run: bakeRackToMain },
+    { t: 'Preset: Podcast Pro', cat: 'Effects', sub: 'Crisp voice clarity + leveling', run: () => $('#presetPodcast').click() },
+    { t: 'Preset: Warm Radio', cat: 'Effects', sub: 'Rich broadcast presence', run: () => $('#presetRadio').click() },
+    { t: 'Preset: Telephone Lo-Fi', cat: 'Effects', sub: 'Vintage bandpass filter', run: () => $('#presetLofi').click() },
+
+    { t: 'Multitrack & Layering Studio', cat: 'Track', sub: 'Add BGM bed + auto-ducking', run: openLayersPanel },
+    { t: 'Bounce Track 1 + Track 2 Mix', cat: 'Track', sub: 'Render layered mix to main track', run: bounceMixToMain },
+    { t: 'Merge multiple clips', cat: 'Track', sub: 'Stitch clips with crossfades', run: openMergeStudio },
+    { t: 'Export audio', cat: 'Track', sub: 'Render WAV/MP3 with ID3 & cover art', k: 'Ctrl+E', run: () => doExport(false) },
+    { t: 'Export selection', cat: 'Track', sub: 'Export only the IN/OUT range', run: exportSelection },
+    { t: 'Open audio file', cat: 'Track', sub: 'Import audio from device', k: 'Ctrl+O', run: () => $('#fileInput').click() },
+    { t: 'Record from microphone', cat: 'Track', sub: 'Open Pro Mic Studio recorder', run: startRecording },
+    { t: 'Download session file', cat: 'Track', sub: 'Save portable .sonicforge project', run: saveSessionFile },
+    { t: 'Mix to mono', cat: 'Track', sub: 'Sum stereo channels to mono', run: doMono },
+    { t: 'Duplicate to stereo', cat: 'Track', sub: 'Convert mono to dual-channel stereo', run: doStereo },
+    { t: 'Keep Left channel only', cat: 'Track', sub: 'Isolate left channel', run: () => doKeepChannel(0) },
+    { t: 'Keep Right channel only', cat: 'Track', sub: 'Isolate right channel', run: () => doKeepChannel(1) },
+    { t: 'Swap Left / Right channels', cat: 'Track', sub: 'Flip stereo image', run: doSwapLR },
+
+    { t: 'Zoom in', cat: 'View', sub: 'Inspect waveform detail', k: '+', run: () => zoomAt(1.4) },
+    { t: 'Zoom out', cat: 'View', sub: 'See wider timeline', k: '−', run: () => zoomAt(1 / 1.4) },
+    { t: 'Zoom to fit', cat: 'View', sub: 'Fit entire track in viewport', k: '0', run: fitView },
+    { t: 'Zoom to selection', cat: 'View', sub: 'Fill screen with IN/OUT range', run: zoomToSelection },
+    { t: 'View: Waveform', cat: 'View', sub: 'Classic amplitude view', run: () => setWaveMode('wave') },
+    { t: 'View: Stereo L / R', cat: 'View', sub: 'Split left & right waveforms', run: () => setWaveMode('stereo') },
+    { t: 'View: Spectrogram', cat: 'View', sub: 'Frequency heat map', run: () => setWaveMode('spec') },
+    { t: 'View: Spec + Wave Mix', cat: 'View', sub: 'Combined spectrum & waveform', run: () => setWaveMode('mix') },
+    { t: 'Keyboard shortcuts', cat: 'View', sub: 'View all hotkeys', k: '?', run: showHelp },
   ];
-  let cmdSel = 0, cmdList = [];
+  const CMD_CATS = ['All', 'Smart', 'Edit', 'Effects', 'Playback', 'Track', 'View'];
+  let cmdSel = 0, cmdList = [], cmdCat = 'All';
   function openCmd() {
     const opener = document.activeElement; closeOverlays(); overlayOpener = opener;
     $('#cmdk').inert = false; $('.app').inert = true; document.body.classList.add('overlay-open');
     $('#cmdk').classList.add('on');
     $('#scrim').classList.add('on');
+    cmdCat = 'All';
     $('#cmdkInput').value = '';
+    if ($('#cmdkClear')) $('#cmdkClear').hidden = true;
+    renderCmdTabs();
     renderCmd('');
-    setTimeout(() => $('#cmdkInput').focus(), 40);
+    setTimeout(() => { if (window.innerWidth >= 760) $('#cmdkInput').focus(); }, 40);
   }
-  function score(q, t) {
-    q = q.toLowerCase(); t = t.toLowerCase();
-    if (!q) return 1;
-    if (t.startsWith(q)) return 100;
-    let i = 0, s = 0;
-    for (const ch of q) { const idx = t.indexOf(ch, i); if (idx < 0) return -1; s += 10 - Math.min(9, idx - i); i = idx + 1; }
-    return s;
+  function renderCmdTabs() {
+    const host = $('#cmdkTabs');
+    if (!host) return;
+    host.innerHTML = '';
+    CMD_CATS.forEach((cat) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cmdk-tab' + (cmdCat === cat ? ' on' : '');
+      b.textContent = cat;
+      b.addEventListener('click', () => {
+        cmdCat = cat;
+        renderCmdTabs();
+        renderCmd($('#cmdkInput').value);
+        haptic(4);
+      });
+      host.appendChild(b);
+    });
+  }
+  function fuzzyMatch(q, t) {
+    q = q.trim().toLowerCase();
+    const lt = t.toLowerCase();
+    if (!q) return { s: 1, idx: [] };
+    if (lt.startsWith(q)) return { s: 140, idx: Array.from({ length: q.length }, (_, k) => k) };
+    const subIdx = lt.indexOf(q);
+    if (subIdx >= 0) return { s: 105 - Math.min(20, subIdx), idx: Array.from({ length: q.length }, (_, k) => subIdx + k) };
+    let i = 0, s = 0; const idx = [];
+    for (const ch of q) {
+      const pos = lt.indexOf(ch, i);
+      if (pos < 0) return null;
+      s += 10 - Math.min(9, pos - i);
+      idx.push(pos);
+      i = pos + 1;
+    }
+    return { s, idx };
+  }
+  function escHtml(str) {
+    return str.replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  }
+  function highlightTitle(text, idxs) {
+    if (!idxs || !idxs.length) return escHtml(text);
+    const set = new Set(idxs);
+    let out = '', inMark = false;
+    for (let i = 0; i < text.length; i++) {
+      const m = set.has(i);
+      if (m && !inMark) { out += '<mark>'; inMark = true; }
+      else if (!m && inMark) { out += '</mark>'; inMark = false; }
+      out += escHtml(text[i]);
+    }
+    if (inMark) out += '</mark>';
+    return out;
   }
   function renderCmd(q) {
-    cmdList = COMMANDS.map((c) => ({ c, s: score(q, c.t) })).filter((x) => x.s > 0).sort((a, b) => b.s - a.s).map((x) => x.c);
+    const pool = cmdCat === 'All' ? COMMANDS : COMMANDS.filter((c) => c.cat === cmdCat);
+    const trimmed = q.trim();
+    const ranked = [];
+    for (const c of pool) {
+      const mT = fuzzyMatch(trimmed, c.t);
+      const mS = trimmed ? fuzzyMatch(trimmed, c.sub || '') : null;
+      const mC = trimmed ? fuzzyMatch(trimmed, c.cat || '') : null;
+      if (mT || mS || mC) {
+        const scoreVal = Math.max(mT ? mT.s + 20 : 0, mS ? mS.s : 0, mC ? mC.s - 10 : 0);
+        ranked.push({ c, s: scoreVal, idx: mT ? mT.idx : [] });
+      }
+    }
+    if (trimmed) ranked.sort((a, b) => b.s - a.s);
+    cmdList = ranked.map((x) => x.c);
     const list = $('#cmdkList');
     list.innerHTML = '';
     cmdSel = 0;
-    if (!cmdList.length) { list.innerHTML = '<div class="cmdk-empty">No matching command</div>'; return; }
-    cmdList.forEach((c, i) => {
+    if ($('#cmdkCount')) $('#cmdkCount').textContent = cmdList.length + (cmdList.length === 1 ? ' tool' : ' tools');
+    if ($('#cmdkClear')) $('#cmdkClear').hidden = !q.length;
+    if (!cmdList.length) {
+      list.innerHTML = '<div class="cmdk-empty">No matching tools found — try another keyword or switch category.</div>';
+      return;
+    }
+    let lastCat = '';
+    ranked.forEach((entry, i) => {
+      const c = entry.c;
+      if (!trimmed && cmdCat === 'All' && c.cat !== lastCat) {
+        lastCat = c.cat;
+        const g = document.createElement('div');
+        g.className = 'cmdk-grp';
+        g.textContent = c.cat;
+        list.appendChild(g);
+      }
       const b = document.createElement('button');
+      b.type = 'button';
       b.className = 'cmdk-item' + (i === 0 ? ' sel' : '');
-      b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg><span></span>' + (c.k ? '<kbd>' + c.k + '</kbd>' : '');
-      b.lastChild.textContent = c.t;
+      b.innerHTML =
+        '<span class="cmdk-ic" data-cat="' + escHtml(c.cat) + '">' + (CMD_ICONS[c.cat] || CMD_ICONS.Edit) + '</span>' +
+        '<span class="cmdk-main"><span class="cmdk-title">' + highlightTitle(c.t, entry.idx) + '</span>' +
+        (c.sub ? '<span class="cmdk-sub">' + escHtml(c.sub) + '</span>' : '') +
+        '</span>' +
+        '<span class="cmdk-right">' +
+        (c.k ? '<kbd>' + escHtml(c.k) + '</kbd>' : '') +
+        '<svg class="cmdk-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>' +
+        '</span>';
       b.addEventListener('click', () => runCmd(i));
-      b.addEventListener('mousemove', () => { cmdSel = i; paintCmd(); });
+      b.addEventListener('mousemove', () => { if (cmdSel !== i) { cmdSel = i; paintCmd(); } });
       list.appendChild(b);
     });
   }
@@ -22583,11 +22879,14 @@ self.onmessage = function (e) {
     const c = cmdList[i];
     closeOverlays();
     if (c) {
-      if (!hasAudio && !['Open audio file', 'Load demo track', 'Keyboard shortcuts'].includes(c.t)) return toast('Open an audio file first', 'info');
+      if (!hasAudio && !['Open audio file', 'Load demo track', 'Keyboard shortcuts', 'Record from microphone', 'Merge multiple clips'].includes(c.t)) return toast('Open an audio file first', 'info');
+      haptic(6);
       setTimeout(c.run, 30);
     }
   }
   $('#cmdkInput').addEventListener('input', (e) => renderCmd(e.target.value));
+  if ($('#cmdkClear')) $('#cmdkClear').addEventListener('click', () => { $('#cmdkInput').value = ''; renderCmd(''); $('#cmdkInput').focus(); });
+  if ($('#cmdkClose')) $('#cmdkClose').addEventListener('click', closeOverlays);
   $('#cmdkInput').addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); cmdSel = Math.min(cmdList.length - 1, cmdSel + 1); paintCmd(); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); cmdSel = Math.max(0, cmdSel - 1); paintCmd(); }
@@ -22859,8 +23158,10 @@ self.onmessage = function (e) {
       const stepScrub = (dx) => {
         if (!hasAudio) return;
         const winSec = Math.min(2.4, Math.max(0.25, canvasW / Math.max(1, V.pps)));
+        const prevT = P.t;
         const dt = (dx / Math.max(180, wheel.clientWidth)) * winSec;
         P.t = clamp(P.t + dt, 0, dur());
+        checkCrossingCoincide(prevT, P.t);
         tickOff += dx;
         if ($('#jogTicks')) $('#jogTicks').style.backgroundPosition = tickOff.toFixed(1) + 'px center';
         if ($('#jogTimeOut')) $('#jogTimeOut').textContent = fmtTime(P.t);
@@ -23481,5 +23782,5 @@ self.onmessage = function (e) {
   else init();
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a5dcf67ade4e6ce0',t:'MTc5NTIzNTQ2NQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a5dcf67ade4e6ce0',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
