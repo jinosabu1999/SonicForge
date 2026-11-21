@@ -750,8 +750,6 @@ input:focus, select:focus { outline: none; border-color: var(--acc); box-shadow:
   background: rgba(255, 255, 255, .19); color: #ffffff;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
 }
-.dockact.hot { color: var(--acc); }
-.dockact.hot.is-active { background: #ffffff; color: #000000; font-weight: 680; box-shadow: none; }
 
 /* ------------------------------------------- Glass Sheets, Modals, Toasts */
 .scrim { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .58); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity var(--med); }
@@ -1555,7 +1553,7 @@ body.overlay-open { overflow: hidden; }
       <button class="dockact" data-sheet="layers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 4.5-9 4.5-9-4.5z"/><path d="m3 12 9 4.5 9-4.5"/><path d="m3 16.5 9 4.5 9-4.5"/></svg>Tracks</button>
       <button class="dockact" data-sheet="fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 20v-7M5 9V4M12 20v-9M12 7V4M19 20v-4M19 12V4"/><circle cx="5" cy="11" r="1.8"/><circle cx="12" cy="9" r="1.8"/><circle cx="19" cy="14" r="1.8"/></svg>Effects</button>
       <button class="dockact" data-sheet="record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Record</button>
-      <button class="dockact hot" data-sheet="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11"/><path d="m8 10.5 4 4 4-4"/><path d="M4 20h16"/></svg>Export</button>
+      <button class="dockact" data-sheet="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11"/><path d="m8 10.5 4 4 4-4"/><path d="M4 20h16"/></svg>Export</button>
     </div>
   </nav>
 </div>
@@ -21911,20 +21909,7 @@ self.onmessage = function (e) {
       setProg(1);
       const blob = new Blob([bytes], { type: mime });
       const fname = name + '.' + ext;
-      let saved = false;
-      if (window.showSaveFilePicker) {
-        try {
-          const handle = await window.showSaveFilePicker({
-            suggestedName: fname,
-            types: [{ description: ext.toUpperCase() + ' audio', accept: { [mime]: ['.' + ext] } }],
-          });
-          const w = await handle.createWritable();
-          await w.write(blob);
-          await w.close();
-          saved = true;
-        } catch (e) { if (e && e.name === 'AbortError') { busy(false); prog.classList.remove('on'); return; } }
-      }
-      if (!saved) downloadBlob(blob, fname);
+      downloadBlob(blob, fname);
       toast('Exported ' + fname + ' (' + fmtBytes(bytes.length) + ')', 'ok', 3400);
     } catch (e) {
       toast('Export failed: ' + e.message, 'err', 5000);
